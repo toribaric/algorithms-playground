@@ -55,7 +55,9 @@ bool isOut (Point current) {
  * There are 5 conditions under which the recursion for the next vertex
  * won't be done:
  * - the distance between the next vertex and the destination would be 
- * greater than the distance of the last found path
+ * greater than the distance of the last found path - this condition triggers
+ * only after the first path has been found and it super-boosts the algorithm
+ * convergence - until that happens, the other conditions are cleaning the stack
  * - distance between the next vertex and the destination would be greater than
  * the length of the inner field (standard chessboard length of 8 units)
  * - distance between the current vertex and the destination was within the
