@@ -1,6 +1,6 @@
 #include "shortest/shortest.h"
 
 int main(int argc, const char *argv[]) {
-    findShortestKnightPath({4, 5}, {5, 5});
+    findShortestKnightPath({41, 998}, {645, 700});
     return 0;
 }
