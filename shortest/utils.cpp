@@ -13,15 +13,38 @@ function<bool(Point)> isPointMatch (Point dest) {
     };
 }
 
+bool wasPrevious(Point *previous, Point current) {
+    while (previous != NULL) {
+        if (previous->x == current.x && previous->y == current.y) {
+            return true;
+        }
+
+        previous = previous->prev;
+    }
+
+    return false;
+}
+
+string generatePath(Point point) {
+    string path = "";
+    Point *previous = &point;
+    while (previous != NULL) {
+        string pathNode = "(" + to_string(previous->x) + "," + to_string(previous->y) + ")";
+        reverse(pathNode.begin(), pathNode.end());
+        path += pathNode;
+        previous = previous->prev;
+    }
+
+    reverse(path.begin(), path.end());
+    return point.path + path;
+}
+
 void printResult (Accumulator acc, Point start, Point end) {
     cout << "starting with: " << start.x << ", " << start.y << "\n";
     vector<Point> paths = get<0>(acc);
     for (vector<Point>::iterator i = paths.begin(); i != paths.end(); ++i) {
         cout << "--- DESTINATION --- : (" << end.x << "," << end.y << ")\n";
-        cout << "* PATH: ";
-        for (vector<Point>::iterator j = i->path.begin(); j != i->path.end(); ++j) {
-            cout << "(" << j->x << "," << j->y << ")";
-        }
+        cout << "* PATH: " << i->path;     
         cout << "\n* DISTANCE: " << i->distance << "\n";
         cout << "-------------------\n";
     }

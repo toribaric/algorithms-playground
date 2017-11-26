@@ -19,8 +19,9 @@ const int VERTICES[NUM_VERTICES][VERTICES_DIMENSION] = {
 typedef struct point {
     int x;
     int y;
-    std::vector<struct point> path;
-    double distance;
+    struct point *prev = NULL;
+    std::string path = "";
+    double distance = 0;
 } Point;
 
 typedef std::tuple<std::vector<Point>, double> Accumulator;

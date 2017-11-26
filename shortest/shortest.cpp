@@ -18,12 +18,10 @@ int invokeCorrectionStep (Point *corrected, bool doCorrect, F1 correctX, F2 corr
 
 vector<Point> getVertices(Point point) {
     vector<Point> vertices;
-    vector<Point> path = point.path;
-    path.push_back({.x = point.x, .y = point.y});
     for (const int (&v)[2] : VERTICES) {
-        Point connected = {point.x + v[0], point.y + v[1], path};
+        Point connected = {point.x + v[0], point.y + v[1], &point, point.path};
         connected.distance = getDistance(point, connected) + point.distance;
-        if (!contains(point.path, connected, isPointMatch)) {
+        if (!wasPrevious(&point, connected)) {
             vertices.push_back(connected);
         }
     }
@@ -79,7 +77,8 @@ bool isOut (Point current) {
  */ 
 Accumulator findPath(Point start, Point current, Point end, Accumulator acc) {
     double minDst = get<1>(acc);
-    if (isPointMatch(end)(current)) {
+    if (isPointMatch(end)(current)) {        
+        current.path = generatePath(current);
         get<0>(acc).push_back(current);
         get<1>(acc) = current.distance < minDst || minDst == 0 ? current.distance : minDst;
         return acc;
@@ -127,19 +126,20 @@ Point getCorrectedStart (Point start, Point end) {
             break;
         }
 
-        corrected.path.push_back({.x = corrected.x, .y = corrected.y});
+        Point previous = {.x = corrected.x, .y = corrected.y};
+        corrected.path += "(" + to_string(corrected.x) + "," + to_string(corrected.y) + ")";
         i += invokeCorrectionStep(&corrected, doCorrectX, [=]() { return isXBefore ? 2 : -2; },
                 [=]() { return i % 2 == 0 ? 1 : -1; }); 
         j += invokeCorrectionStep(&corrected, doCorrectY, [=]() { return j % 2 == 0 ? 1 : -1; },
                 [=]() { return isYBefore ? 2 : -2; }); 
-        corrected.distance += getDistance(corrected.path.back(), corrected);
+        corrected.distance += getDistance(previous, corrected);
     }
 
     return corrected;
 }
 
 void findShortestKnightPath(const int (&startCoord)[2], const int (&endCoord)[2]) {
-    Point start = {.x = startCoord[0], .y = startCoord[1], .path = {}, .distance = 0};
+    Point start = {.x = startCoord[0], .y = startCoord[1]};
     Point end = {.x = endCoord[0], .y = endCoord[1]};
     Point correctedStart = getCorrectedStart(start, end);
     Accumulator acc = withExecTime<Accumulator>(

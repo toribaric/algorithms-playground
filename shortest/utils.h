@@ -10,6 +10,10 @@ double getDistance(Point start, Point end);
 
 std::function<bool(Point)> isPointMatch (Point dest);
 
+bool wasPrevious(Point *previous, Point current);
+
+std::string generatePath(Point point);
+
 void printResult (Accumulator acc, Point start, Point end);
 
 template<typename T>
